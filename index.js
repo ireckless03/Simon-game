@@ -1,59 +1,91 @@
 $(document).ready(function () {
-  // Define an array of button colors
-  let buttonColours = ['green', 'red', 'yellow', 'blue'];
+  // Initialize game variables
+  let level = 0; // Current game level
+  const buttonColours = ['green', 'red', 'yellow', 'blue']; // Array of button colors
+  let gamePattern = []; // Stores the generated game pattern
+  let userClickedPattern = []; // Stores the user's clicked pattern
+  let gameStarted = false; // Flag to track if the game has started
 
-  // Initialize an empty array to store the game pattern
-  let gamePattern = [];
-
-  // User click patterns
-  let userClickedPattern = [];
-
-  // Attach the nextSequence function to a key press event
+  // Attach a key press event handler to start the game
   $(document).keypress(function (event) {
-    nextSequence();
+    if (!gameStarted) {
+      startGame();
+    }
   });
 
-  // * Game start
-  // Generate the next element in the game pattern
-  function nextSequence() {
-    // Generate a random number between 0 and 3 (inclusive)
-    let randomNumber = Math.floor(Math.random() * 4);
-
-    // Use the random number to select a color from the buttonColours array
-    let randomChosenColour = buttonColours[randomNumber];
-
-    // Add the randomly chosen color to the game pattern
-    gamePattern.push(randomChosenColour);
-
-    // Log the current game pattern for debugging
-    console.log('Game Pattern:', gamePattern);
-
-    // Call a function to handle animations and audio
-    animateAndPlay(randomChosenColour);
+  // Start the game
+  function startGame() {
+    resetGame();
+    nextSequence();
+    gameStarted = true;
   }
 
+  // Reset the game variables
+  function resetGame() {
+    level = 0;
+    gamePattern = [];
+    userClickedPattern = [];
+    $('#level-title').text('Press A Key to Start');
+  }
+
+  // Generate the next element in the game pattern
+  function nextSequence() {
+    userClickedPattern = [];
+    level++;
+    $('#level-title').text('Level ' + level);
+    const randomChosenColour = pickRandomColour();
+    gamePattern.push(randomChosenColour);
+    setTimeout(() => {
+      animateAndPlay(randomChosenColour);
+    }, 1000);
+  }
+
+  // Pick a random color from the buttonColours array
+  function pickRandomColour() {
+    const randomNumber = Math.floor(Math.random() * buttonColours.length);
+    return buttonColours[randomNumber];
+  }
+
+  // Handle user button clicks
   $('.btn').click(function () {
-    // Get the ID of the clicked button
-    let clickedButtonId = $(this).attr('id');
-
-    // Log the ID to the console (you can perform any action you need here)
-    console.log('Clicked button ID: ' + clickedButtonId);
-
-    // Store the clicked button ID in the array
+    const clickedButtonId = $(this).attr('id');
     userClickedPattern.push(clickedButtonId);
-
-    console.log('User Pattern:', userClickedPattern);
+    animateAndPlay(clickedButtonId);
+    checkAnswer(userClickedPattern.length - 1);
   });
 
   // Function to handle animations and audio
-  function animateAndPlay(color) {
-    // Apply animations and play audio when a button matching the random color is clicked
-    $('.' + color)
+  function animateAndPlay(colour) {
+    $('.' + colour)
       .fadeIn(100)
       .fadeOut(100)
       .fadeIn(100);
 
-    let audio = new Audio('sounds/' + color + '.mp3');
+    const audio = new Audio('sounds/' + colour + '.mp3');
     audio.play();
+  }
+
+  // Check if the user's answer is correct
+  function checkAnswer(currentLevel) {
+    if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
+      console.log('Success');
+
+      if (userClickedPattern.length === gamePattern.length) {
+        setTimeout(function () {
+          userClickedPattern = [];
+          nextSequence();
+        }, 1000);
+      }
+    } else {
+      endGame();
+    }
+  }
+
+  // End the game and reset all variables
+  function endGame() {
+    $('#level-title').text('Game Over, Press Any Key to Restart');
+    const gameOver = new Audio('sounds/wrong.mp3');
+    gameOver.play();
+    gameStarted = false;
   }
 });
