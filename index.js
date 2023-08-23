@@ -1,38 +1,59 @@
-// Wait for the document to be fully loaded using jQuery's ready function
-$(document).ready(function () {});
+$(document).ready(function () {
+  // Define an array of button colors
+  let buttonColours = ['green', 'red', 'yellow', 'blue'];
 
-// Define an array of button colors
-let buttonColours = ['green', 'red', 'yellow', 'blue'];
+  // Initialize an empty array to store the game pattern
+  let gamePattern = [];
 
-// Initialize an empty array to store the game pattern
-let gamePattern = [];
+  // User click patterns
+  let userClickedPattern = [];
 
-// Generate the next element in the game pattern
-function nextSequence() {
-  // Generate a random number between 0 and 3 (inclusive)
-  let randomNumber = Math.floor(Math.random() * 4);
+  // Attach the nextSequence function to a key press event
+  $(document).keypress(function (event) {
+    nextSequence();
+  });
 
-  // Use the random number to select a color from the buttonColours array
-  let randomChosenColour = buttonColours[randomNumber];
+  // * Game start
+  // Generate the next element in the game pattern
+  function nextSequence() {
+    // Generate a random number between 0 and 3 (inclusive)
+    let randomNumber = Math.floor(Math.random() * 4);
 
-  // Add the randomly chosen color to the game pattern
-  gamePattern.push(randomChosenColour);
+    // Use the random number to select a color from the buttonColours array
+    let randomChosenColour = buttonColours[randomNumber];
 
-  // Apply animations and play audio when a button matching the random color is clicked
-  $('.' + randomChosenColour)
-    .fadeIn(100)
-    .fadeOut(100)
-    .fadeIn(100);
+    // Add the randomly chosen color to the game pattern
+    gamePattern.push(randomChosenColour);
 
-  let audio = new Audio('sounds/' + randomChosenColour + '.mp3');
-  audio.play();
+    // Log the current game pattern for debugging
+    console.log('Game Pattern:', gamePattern);
 
-  // Log the current game pattern for debugging
-  console.log('Game Pattern:', gamePattern);
+    // Call a function to handle animations and audio
+    animateAndPlay(randomChosenColour);
+  }
 
-  // Return the randomly chosen color
-  return randomChosenColour;
-}
+  $('.btn').click(function () {
+    // Get the ID of the clicked button
+    let clickedButtonId = $(this).attr('id');
 
-// Attach the nextSequence function to a click event on all buttons with the class 'btn'
-$('.btn').click(nextSequence);
+    // Log the ID to the console (you can perform any action you need here)
+    console.log('Clicked button ID: ' + clickedButtonId);
+
+    // Store the clicked button ID in the array
+    userClickedPattern.push(clickedButtonId);
+
+    console.log('User Pattern:', userClickedPattern);
+  });
+
+  // Function to handle animations and audio
+  function animateAndPlay(color) {
+    // Apply animations and play audio when a button matching the random color is clicked
+    $('.' + color)
+      .fadeIn(100)
+      .fadeOut(100)
+      .fadeIn(100);
+
+    let audio = new Audio('sounds/' + color + '.mp3');
+    audio.play();
+  }
+});
