@@ -18,17 +18,21 @@ function nextSequence() {
   // Add the randomly chosen color to the game pattern
   gamePattern.push(randomChosenColour);
 
-  // Attached click handler, when clicked animations are applied and audio according to colour is played
-  $('#' + randomChosenColour).on('click', function () {
-    $('.' + randomChosenColour)
-      .fadeOut(100)
-      .fadeIn(100);
+  // Apply animations and play audio when a button matching the random color is clicked
+  $('.' + randomChosenColour)
+    .fadeIn(100)
+    .fadeOut(100)
+    .fadeIn(100);
 
-    let audio = new Audio('sounds/' + randomChosenColour + '.mp3');
-    audio.play();
-    return randomChosenColour;
-  });
+  let audio = new Audio('sounds/' + randomChosenColour + '.mp3');
+  audio.play();
 
+  // Log the current game pattern for debugging
+  console.log('Game Pattern:', gamePattern);
+
+  // Return the randomly chosen color
+  return randomChosenColour;
 }
 
-$(".btn").click(nextSequence);
+// Attach the nextSequence function to a click event on all buttons with the class 'btn'
+$('.btn').click(nextSequence);
