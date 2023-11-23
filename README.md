@@ -1,4 +1,5 @@
 # Simon-game
+https://typescript-simon-game.netlify.app/
 
 # Introduction
 The Simon Game is a classic electronic game of memory skill. It was first introduced in the late 1970s and has since become an iconic game that challenges players to remember and repeat a sequence of colors and sounds. This digital version of the Simon Game aims to bring the same excitement and challenge to your computer or mobile device.
